@@ -1,0 +1,10 @@
+com\example\checkinservice\CheckinServiceApplication.class
+com\example\checkinservice\messaging\LegacyApiConsumer.class
+com\example\checkinservice\config\RabbitConfig.class
+com\example\checkinservice\messaging\EmailConsumer.class
+com\example\checkinservice\config\EmailConfig.class
+com\example\checkinservice\controller\CheckinController.class
+com\example\checkinservice\model\AttendanceEvent.class
+com\example\checkinservice\messaging\QueueProducer.class
+com\example\checkinservice\repository\AttendanceEventRepository.class
+com\example\checkinservice\service\AttendanceService.class
