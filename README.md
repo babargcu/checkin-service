@@ -1,44 +1,102 @@
-# Check-in Service Design
+# 🏭 Check-in Service
 
-## Overview
-The Check-in Service is a Spring Boot-based REST API for factory attendance management. 
-Employees can check-in and check-out using a single endpoint that accepts their employee ID. 
-All working times are stored in a database (H2 in development) and asynchronous messages 
-are sent to external systems such as email notifications and a legacy attendance recording API.
+A **Spring Boot** microservice for managing employee **check-ins and check-outs**.  
+On check-out, the service records total hours worked, stores them in an **H2 in-memory database**, and sends an asynchronous message to **RabbitMQ** for email or legacy API integration.
 
-## Components
+---
 
-### REST API
-Single endpoint handles check-in and check-out. 
-The service decides whether an employee is checking in or out based on their existing records in the database.
+## ⚙️ Tech Stack
+- **Java 17**
+- **Spring Boot 3.2.5**
+- **Spring Data JPA** (H2 Database)
+- **Spring AMQP (RabbitMQ)**
+- **Spring Boot Mail (simulated)**
+- **Maven**
+- **Docker (for RabbitMQ)**
 
-### Database
-H2 is used to store all attendance events. Each event records:
-- Employee ID
-- Check-in time
-- Check-out time
-- Hours worked
+---
 
-### Asynchronous Queue
-RabbitMQ is used to decouple the main API from slow or unreliable external systems. 
-Messages containing attendance events are enqueued on check-out.
+## 📂 Repository Contents
 
-### Consumers
-- **EmailConsumer** consumes messages to send emails (currently logs for testing).  
-- A separate consumer can call the legacy API to record hours, implementing retries and error handling.
+| File / Folder | Description |
+|----------------|-------------|
+| `src/main/java` | Source code for Spring Boot service |
+| `src/main/resources/application.properties` | H2 DB, RabbitMQ, and app configuration |
+| `architecture-diagram.drawio` | System architecture diagram (importable in [draw.io](https://app.diagrams.net/)) |
+| `EXPLANATION.md` | Short written explanation of system design |
+| `README.md` | This file |
 
-### Error Handling and Reliability
-- All check-in/check-out events are first stored in the database before sending to external systems.  
-- RabbitMQ ensures messages are not lost and can be retried in case of consumer failures.  
-- JSON serialization is used for messages to ensure cross-language compatibility.
+---
 
-### Scalability and Monitoring
-- Multiple consumers can scale independently to handle email and legacy API calls.  
-- Each message can be traced using unique employee IDs and timestamps to monitor processing.  
-- Failed messages can be routed to a dead-letter queue for investigation.
+## How to Run the Project
 
-### Benefits of Design
-- Decouples user interactions from slow external dependencies.  
-- Prevents data loss using a persistent database and queue.  
-- Allows retries and handles outages gracefully.  
-- Extensible to new consumers or changes in message format.
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/<your-username>/checkin-service.git
+cd checkin-service
+
+
+Start RabbitMQ in Docker
+
+Make sure Docker Desktop is running, then execute:
+
+docker run -d --hostname my-rabbit --name some-rabbit \
+-p 5672:5672 -p 15672:15672 rabbitmq:3-management
+
+
+
+Credentials:
+
+Username: guest
+
+Password: guest
+
+Build the Application
+mvn clean install
+
+Run the Service
+mvn spring-boot:run
+
+
+The Check-in Service will start at:
+
+http://localhost:8080
+
+Access H2 Database Console
+
+To view all attendance data:
+http://localhost:8080/h2-console
+
+JDBC URL: jdbc:h2:mem:checkin_db
+Username: sa
+Password:
+
+Then execute:
+
+SELECT * FROM ATTENDANCE_EVENT;
+
+Check-in
+POST http://localhost:8080/api/attendance
+Content-Type: application/json
+
+{
+  "employeeId": "emp123"
+}
+
+
+Response:
+
+Check-in recorded
+
+Check-out
+POST http://localhost:8080/api/attendance
+Content-Type: application/json
+
+{
+  "employeeId": "emp123"
+}
+
+
+Response:
+
+Check-out recorded
