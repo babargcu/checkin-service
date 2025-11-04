@@ -1,12 +1,12 @@
-# 🏭 Check-in Service
+# Check-in Service
 
 A **Spring Boot** microservice for managing employee **check-ins and check-outs**.  
 On check-out, the service records total hours worked, stores them in an **H2 in-memory database**, and sends an asynchronous message to **RabbitMQ** for email or legacy API integration.
 
 ---
 
-## ⚙️ Tech Stack
-- **Java 17**
+## Tech Stack
+- **Java 25**
 - **Spring Boot 3.2.5**
 - **Spring Data JPA** (H2 Database)
 - **Spring AMQP (RabbitMQ)**
@@ -16,13 +16,12 @@ On check-out, the service records total hours worked, stores them in an **H2 in-
 
 ---
 
-## 📂 Repository Contents
+## Repository Contents
 
 | File / Folder | Description |
 |----------------|-------------|
 | `src/main/java` | Source code for Spring Boot service |
 | `src/main/resources/application.properties` | H2 DB, RabbitMQ, and app configuration |
-| `architecture-diagram.drawio` | System architecture diagram (importable in [draw.io](https://app.diagrams.net/)) |
 | `EXPLANATION.md` | Short written explanation of system design |
 | `README.md` | This file |
 
@@ -30,7 +29,7 @@ On check-out, the service records total hours worked, stores them in an **H2 in-
 
 ## How to Run the Project
 
-### 1️⃣ Clone the Repository
+### Clone the Repository
 ```bash
 git clone https://github.com/<your-username>/checkin-service.git
 cd checkin-service
@@ -42,14 +41,6 @@ Make sure Docker Desktop is running, then execute:
 
 docker run -d --hostname my-rabbit --name some-rabbit \
 -p 5672:5672 -p 15672:15672 rabbitmq:3-management
-
-
-
-Credentials:
-
-Username: guest
-
-Password: guest
 
 Build the Application
 mvn clean install
@@ -71,10 +62,6 @@ JDBC URL: jdbc:h2:mem:checkin_db
 Username: sa
 Password:
 
-Then execute:
-
-SELECT * FROM ATTENDANCE_EVENT;
-
 Check-in
 POST http://localhost:8080/api/attendance
 Content-Type: application/json
@@ -85,10 +72,9 @@ Content-Type: application/json
 
 
 Response:
-
 Check-in recorded
 
-Check-out
+Check-out:
 POST http://localhost:8080/api/attendance
 Content-Type: application/json
 
@@ -99,4 +85,4 @@ Content-Type: application/json
 
 Response:
 
-Check-out recorded
+Check-out recorded. Hours worked: 8.00
