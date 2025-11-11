@@ -31,7 +31,7 @@ On check-out, the service records total hours worked, stores them in an **H2 in-
 
 ### Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/checkin-service.git
+git clone https://github.com/babargcu/checkin-service.git
 cd checkin-service
 
 
